@@ -12,6 +12,7 @@ SRCS = \
 		parsing/pipe.c \
 		parsing/redirections.c \
 		parsing/quotes.c \
+		parsing/tokonizer.c \
 		execution/execution.c \
 		execution/path.c \
 		execution/pipe.c \
@@ -25,6 +26,7 @@ SRCS = \
 		utils/ft_strtrim.c \
 		utils/ft_strrchr.c\
 		utils/ft_free.c
+
 
 SRCS := $(addprefix $(SRC_DIR)/, $(SRCS))
 OBJS = $(SRCS:.c=.o)
