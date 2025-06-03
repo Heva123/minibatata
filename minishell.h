@@ -83,6 +83,7 @@
 #include <readline/history.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 // ---------------- Tree node types ----------------
 typedef enum e_node_type {
@@ -136,4 +137,7 @@ t_node  *new_node(t_node_type type);
 char    **get_paths(char **envp);
 char    *find_command_path(char *cmd, char **envp);
 
-#endif // MINISHELL_H
+char *process_escapes(const char *token, int in_single);
+
+
+#endif 
