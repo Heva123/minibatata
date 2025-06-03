@@ -78,12 +78,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <stdbool.h>
 
 // ---------------- Tree node types ----------------
 typedef enum e_node_type {
@@ -132,12 +130,10 @@ t_node  *parse_prompt(char *input);
 t_node  *parse_pipe(char *prompt);
 t_node  *parse_redir(char *prompt);
 t_node  *new_node(t_node_type type);
-
-// ---------------- Path ----------------
 char    **get_paths(char **envp);
 char    *find_command_path(char *cmd, char **envp);
-
-char *process_escapes(const char *token, int in_single);
+void    update_quote_state(char c, int *in_single, int *in_double);
+char    *process_quotes(const char *token);
 
 
 #endif 

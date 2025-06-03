@@ -13,7 +13,7 @@ int	main(int argc, char **argv, char **envp)
 		prompt = readline("🍄 minishell$ ");
 		if (!prompt)
 			break;
-		if (ft_strncmp(prompt, "exit", 4) == 0)
+		if (ft_strncmp(prompt, "exit", 5) == 0)
 		{
 			free(prompt);
 			break;

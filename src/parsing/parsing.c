@@ -58,21 +58,23 @@
 
 #include "../../minishell.h"
 
-static bool is_unquoted_operator(char *input, int i, int in_single, int in_double)
+static int	is_unquoted_operator(char *input, int i, int in_single, int in_double)
 {
-    if (in_single || in_double)
-        return false;
-        
-    if (input[i] == '|' || input[i] == '>' || input[i] == '<')
-    {
-        // Check if it's escaped
-        int j = i;
-        while (j > 0 && input[j-1] == '\\')
-            j--;
-        return ((i - j) % 2 == 0); // Not escaped
-    }
-    return false;
+	int	j;
+
+	if (in_single || in_double)
+		return (0);
+	if (input[i] == '|' || input[i] == '>' || input[i] == '<')
+	{
+		j = i;
+		while (j > 0 && input[j - 1] == '\\')
+			j--;
+		if (((i - j) % 2) == 0)
+			return (1);
+	}
+	return (0);
 }
+
 
 t_node *parse_prompt(char *input)
 {
