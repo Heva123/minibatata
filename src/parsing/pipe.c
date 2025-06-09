@@ -1,6 +1,5 @@
 #include "../../minishell.h"
 
-
 t_node	*parse_pipe(char *prompt)
 {
 	char	*pipe_pos = ft_strchr(prompt, '|');

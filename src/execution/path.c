@@ -1,6 +1,5 @@
 #include "../../minishell.h"
 
-
 char	**get_paths(char **envp)
 {
 	while (*envp)
