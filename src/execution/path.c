@@ -12,23 +12,29 @@ char	**get_paths(char **envp)
 }
 
 char *find_command_path(char *cmd, char **envp) {
-	char **paths = get_paths(envp);
-	char *full_path = NULL;
-	char *temp = NULL;
-	int i = 0;
+	char **paths;
+	char *full_path;
+	char *temp;
+	int i;
 
-	if (!paths) return NULL;
+	paths = get_paths(envp);
+	full_path = NULL;
+	temp = NULL;
+	i = 0;
+	if (!paths) 
+		return (NULL);
 	while (paths[i]) {
 		temp = ft_strjoin(paths[i], "/");
 		full_path = ft_strjoin(temp, cmd);
 		free(temp);
-		if (access(full_path, X_OK) == 0) {
+		if (access(full_path, X_OK) == 0) 
+		{
 			ft_free(paths);
-			return full_path;
+			return (full_path);
 		}
 		free(full_path);
 		i++;
 	}
 	ft_free(paths);
-	return NULL;
+	return (NULL);
 }

@@ -2,8 +2,9 @@
 
 t_node	*parse_pipe(char *prompt)
 {
-	char	*pipe_pos = ft_strchr(prompt, '|');
+	char	*pipe_pos;
 
+	pipe_pos = ft_strchr(prompt, '|');
 	if (pipe_pos)
 	{
 		*pipe_pos = '\0';

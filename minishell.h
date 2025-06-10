@@ -44,6 +44,9 @@ char    *ft_strdup(const char *s1);
 char    *ft_strtrim(char const *s1, char const *set);
 void    ft_free(char **arr);
 char    *ft_strrchr(const char *s, int c);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*ft_strndup(const char *s, size_t n);
+void	ft_putstr_fd(char *s, int fd);
 
 // ---------------- Execution ----------------
 void    execute_tree(t_node *node, char **envp);

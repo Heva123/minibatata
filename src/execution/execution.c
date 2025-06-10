@@ -12,10 +12,12 @@ t_node *new_node(t_node_type type)
 
 void execute_command(t_node *node, char **envp)
 {
+    pid_t pid;
+
     if (!node || !node->args || !node->args[0])
         return;
 
-    pid_t pid = fork();
+    pid = fork();
     if (pid == 0)
     {
         char *cmd_path = find_command_path(node->args[0], envp);

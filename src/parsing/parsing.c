@@ -19,47 +19,51 @@ static int	is_unquoted_operator(char *input, int i, int in_single, int in_double
 }
 
 
-t_node *parse_prompt(char *input)
+static t_node	*handle_pipe_or_redir(char *input)
 {
-    int i = 0;
-    int in_single = 0, in_double = 0;
-    
-    if (!input)
-        return NULL;
+	int		i;
+	int		in_single;
+	int		in_double;
 
-    // First check for unquoted pipes
-    while (input[i])
-    {
-        update_quote_state(input[i], &in_single, &in_double);
-        if (is_unquoted_operator(input, i, in_single, in_double) && input[i] == '|')
-        {
-            input[i] = '\0';
-            t_node *pipe_node = new_node(NODE_PIPE);
-            if (!pipe_node)
-                return NULL;
-                
-            pipe_node->left = parse_prompt(input);
-            pipe_node->right = parse_prompt(&input[i+1]);
-            return pipe_node;
-        }
-        i++;
-    }
+	i = 0;
+	in_single = 0;
+	in_double = 0;
+	while (input[i])
+	{
+		update_quote_state(input[i], &in_single, &in_double);
+		if (is_unquoted_operator(input, i, in_single, in_double)
+			&& input[i] == '|')
+		{
+			input[i] = '\0';
+			t_node *pipe = new_node(NODE_PIPE);
+			if (!pipe)
+				return (NULL);
+			pipe->left = parse_prompt(input);
+			pipe->right = parse_prompt(&input[i + 1]);
+			return (pipe);
+		}
+		i++;
+	}
+	return (parse_redir(input));
+}
 
-    // Then handle redirections (only unquoted ones)
-    t_node *redir_node = parse_redir(input);
-    if (redir_node)
-        return redir_node;
+t_node	*parse_prompt(char *input)
+{
+	t_node	*node;
 
-    // If no pipes or redirections, it's a simple command
-    t_node *cmd_node = new_node(NODE_CMD);
-    if (!cmd_node)
-        return NULL;
-        
-    cmd_node->args = tokenize_input(input);
-    if (!cmd_node->args)
-    {
-        free(cmd_node);
-        return NULL;
-    }
-    return cmd_node;
+	if (!input)
+		return (NULL);
+	node = handle_pipe_or_redir(input);
+	if (node)
+		return (node);
+	node = new_node(NODE_CMD);
+	if (!node)
+		return (NULL);
+	node->args = tokenize_input(input);
+	if (!node->args)
+	{
+		free(node);
+		return (NULL);
+	}
+	return (node);
 }

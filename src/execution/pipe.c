@@ -1,48 +1,65 @@
 #include "../../minishell.h"
 
-void execute_pipe_node(t_node *node, char **envp)
+static void	handle_child_process(int pipefd[2], int fd_to_dup, t_node *node, char **envp)
 {
-    int pipefd[2];
-    pid_t pid1, pid2;
+	close(pipefd[!fd_to_dup]);
+	dup2(pipefd[fd_to_dup], fd_to_dup + 1);
+	close(pipefd[fd_to_dup]);
+	execute_tree(node, envp);
+	exit(EXIT_SUCCESS);
+}
 
-    if (!node || pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        return;
-    }
+static int	create_pipe(int pipefd[2])
+{
+	if (pipe(pipefd) == -1)
+	{
+		ft_putstr_fd("minishell: pipe error\n", STDERR_FILENO);
+		return (0);
+	}
+	return (1);
+}
 
-    pid1 = fork();
-    if (pid1 == 0)
-    {
-        close(pipefd[0]);
-        dup2(pipefd[1], STDOUT_FILENO);
-        close(pipefd[1]);
-        execute_tree(node->left, envp);
-        exit(EXIT_SUCCESS);
-    }
-    else if (pid1 < 0)
-    {
-        perror("fork");
-        return;
-    }
+static int	fork_process(pid_t *pid, int pipefd[2], int fd_to_dup, t_node *node, char **envp)
+{
+	*pid = fork();
+	if (*pid == 0)
+		handle_child_process(pipefd, fd_to_dup, node, envp);
+	if (*pid < 0)
+	{
+		ft_putstr_fd("minishell: fork error\n", STDERR_FILENO);
+		return (0);
+	}
+	return (1);
+}
 
-    pid2 = fork();
-    if (pid2 == 0)
-    {
-        close(pipefd[1]);
-        dup2(pipefd[0], STDIN_FILENO);
-        close(pipefd[0]);
-        execute_tree(node->right, envp);
-        exit(EXIT_SUCCESS);
-    }
-    else if (pid2 < 0)
-    {
-        perror("fork");
-        return;
-    }
+static void	close_pipe(int pipefd[2])
+{
+	close(pipefd[0]);
+	close(pipefd[1]);
+}
 
-    close(pipefd[0]);
-    close(pipefd[1]);
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, NULL, 0);
+void	execute_pipe_node(t_node *node, char **envp)
+{
+	int		pipefd[2];
+	pid_t	pid1;
+	pid_t	pid2;
+
+	if (!node)
+		return ;
+	if (!create_pipe(pipefd))
+		return ;
+	if (!fork_process(&pid1, pipefd, 1, node->left, envp))
+	{
+		close_pipe(pipefd);
+		return ;
+	}
+	if (!fork_process(&pid2, pipefd, 0, node->right, envp))
+	{
+		close_pipe(pipefd);
+		waitpid(pid1, NULL, 0);
+		return ;
+	}
+	close_pipe(pipefd);
+	waitpid(pid1, NULL, 0);
+	waitpid(pid2, NULL, 0);
 }
