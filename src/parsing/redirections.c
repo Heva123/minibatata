@@ -3,21 +3,23 @@
 
 t_node *parse_redir(char *prompt)
 {
+    char *ptr = prompt;
     char *last_redir = NULL;
     t_node_type redir_type = NODE_REDIR_OUT;
     int in_single = 0, in_double = 0;
-    char *ptr = prompt;
 
-    // Find last unquoted redirection
     while (*ptr)
     {
         update_quote_state(*ptr, &in_single, &in_double);
         if (!in_single && !in_double && (*ptr == '>' || *ptr == '<'))
         {
             last_redir = ptr;
-            if (*ptr == '>' && *(ptr + 1) == '>')
-            {
+            if (*ptr == '>' && *(ptr + 1) == '>') {
                 redir_type = NODE_APPEND;
+                ptr++;
+            }
+            else if (*ptr == '<' && *(ptr + 1) == '<') {
+                redir_type = NODE_HEREDOC;
                 ptr++;
             }
             else if (*ptr == '>')

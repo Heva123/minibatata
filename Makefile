@@ -17,6 +17,7 @@ SRCS = \
 		execution/path.c \
 		execution/pipe.c \
 		execution/redirections.c \
+		execution/heredoc.c \
 		utils/ft_split.c \
 		utils/ft_strjoin.c \
 		utils/ft_strncmp.c \

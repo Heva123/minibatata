@@ -15,7 +15,8 @@ typedef enum e_node_type {
     NODE_REDIR_OUT,   
     NODE_REDIR_IN,    
     NODE_APPEND,      
-    NODE_PIPE
+    NODE_PIPE,
+    NODE_HEREDOC 
 } t_node_type;
 
 typedef struct s_node {
@@ -50,6 +51,7 @@ void    execute_pipe_node(t_node *node, char **envp);
 void    execute_redirection_out(t_node *node, char **envp);
 void    execute_redirection_in(t_node *node, char **envp);
 void    execute_redirection_append(t_node *node, char **envp);
+void	execute_heredoc(t_node *node, char **envp);
 
 // ---------------- Parsing ----------------
 t_node  *parse_prompt(char *input);

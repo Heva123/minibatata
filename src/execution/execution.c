@@ -37,19 +37,20 @@ void execute_command(t_node *node, char **envp)
     waitpid(pid, NULL, 0);
 }
 
-void	execute_tree(t_node *node, char **envp)
+void execute_tree(t_node *node, char **envp)
 {
-	if (!node)
-		return;
-
-	if (node->type == NODE_CMD)
-		execute_command(node, envp);
-	else if (node->type == NODE_REDIR_OUT)
-		execute_redirection_out(node, envp);
-	else if (node->type == NODE_REDIR_IN)
-		execute_redirection_in(node, envp);
-	else if (node->type == NODE_APPEND)
-		execute_redirection_append(node, envp);
-	else if (node->type == NODE_PIPE)
-		execute_pipe_node(node, envp);
+    if (!node)
+        return;
+    if (node->type == NODE_CMD)
+        execute_command(node, envp);
+    else if (node->type == NODE_REDIR_OUT)
+        execute_redirection_out(node, envp);
+    else if (node->type == NODE_REDIR_IN)
+        execute_redirection_in(node, envp);
+    else if (node->type == NODE_APPEND)
+        execute_redirection_append(node, envp);
+    else if (node->type == NODE_PIPE)
+        execute_pipe_node(node, envp);
+    else if (node->type == NODE_HEREDOC) 
+        execute_heredoc(node, envp);
 }
