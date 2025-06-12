@@ -116,3 +116,4 @@ t_node *parse_redir(char *prompt)
     }
     return node;
 }
+
