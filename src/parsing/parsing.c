@@ -18,7 +18,6 @@ static int	is_unquoted_operator(char *input, int i, int in_single, int in_double
 	return (0);
 }
 
-
 static t_node	*handle_pipe_or_redir(char *input)
 {
 	int		i;

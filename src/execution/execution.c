@@ -1,5 +1,5 @@
 
-#include "../../minishell.h"
+ #include "../../minishell.h"
 
 t_node *new_node(t_node_type type)
 {
@@ -38,6 +38,8 @@ void execute_command(t_node *node, char **envp)
     }
     waitpid(pid, NULL, 0);
 }
+
+
 
 void execute_tree(t_node *node, char **envp)
 {

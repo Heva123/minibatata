@@ -65,6 +65,7 @@ char    **get_paths(char **envp);
 char    *find_command_path(char *cmd, char **envp);
 void    update_quote_state(char c, int *in_single, int *in_double);
 char    *process_quotes(const char *token);
+t_node *parse_command(char *cmd_str);
 
 
 #endif 
