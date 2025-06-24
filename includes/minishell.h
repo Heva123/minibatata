@@ -8,6 +8,8 @@
 #include <readline/history.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+# include <limits.h>
+#include "builtins.h"
 
 // ---------------- Tree node types ----------------
 typedef enum e_node_type {
@@ -16,7 +18,7 @@ typedef enum e_node_type {
     NODE_REDIR_IN,    
     NODE_APPEND,      
     NODE_PIPE,
-    NODE_HEREDOC 
+    NODE_HEREDOC,
 } t_node_type;
 
 typedef struct s_node {
@@ -25,6 +27,7 @@ typedef struct s_node {
     char *filename;
     struct s_node *left;
     struct s_node *right;
+    char **env; 
 } t_node;
 
 // ---------------- Tokenizer ----------------
@@ -47,6 +50,10 @@ char    *ft_strrchr(const char *s, int c);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 void	ft_putstr_fd(char *s, int fd);
+int     ft_isdigit(int c);
+int     ft_isalnum(int c);
+int     ft_atoi(const char *str);
+int     ft_strcmp(const char *s1, const char *s2);
 
 // ---------------- Execution ----------------
 void    execute_tree(t_node *node, char **envp);

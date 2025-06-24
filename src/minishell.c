@@ -1,6 +1,5 @@
-#include "../minishell.h"
+#include "minishell.h"
 
-#include <stdio.h>
 
 const char *node_type_to_str(t_node_type type)
 {
@@ -68,30 +67,48 @@ void print_tree(t_node *node, int depth)
     print_tree(node->left, depth + 1);
 }
 
-
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	char	*prompt;
-	t_node	*tree;
+    char    *prompt;
+    t_node  *tree;
+    char    **env_copy;
+    int     i;
 
-	(void)argc;
-	(void)argv;
+    (void)argc;
+    (void)argv;
 
-	while (1)
-	{
-		prompt = readline("🍄 minishell$ ");
-		if (!prompt)
-			break;
-		if (ft_strncmp(prompt, "exit", 5) == 0)
-		{
-			free(prompt);
-			break;
-		}
-		add_history(prompt);
-		tree = parse_prompt(prompt);
-		print_tree(tree, 0);
-		execute_tree(tree, envp);
-		free(prompt);
-	}
-	return (0);
+    // Copy environment variables
+    i = 0;
+    while (envp[i])
+        i++;
+    env_copy = malloc(sizeof(char *) * (i + 1));
+    i = 0;
+    while (envp[i])
+    {
+        env_copy[i] = ft_strdup(envp[i]);
+        i++;
+    }
+    env_copy[i] = NULL;
+
+    while (1)
+    {
+        prompt = readline("🍄 minishell$ ");
+        if (!prompt)
+            break;
+        if (ft_strncmp(prompt, "exit", 5) == 0)
+        {
+            free(prompt);
+            break;
+        }
+        add_history(prompt);
+        tree = parse_prompt(prompt);
+        tree->env = env_copy; // Pass environment to the tree
+        print_tree(tree, 0);
+        execute_tree(tree, envp);
+        free(prompt);
+    }
+    
+    // Free environment copy
+    ft_free(env_copy);
+    return (0);
 }

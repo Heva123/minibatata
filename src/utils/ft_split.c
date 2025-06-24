@@ -1,5 +1,5 @@
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 static char	**free_array(char **ptr, int i)
 {

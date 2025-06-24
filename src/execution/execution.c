@@ -1,5 +1,5 @@
 
- #include "../../minishell.h"
+ #include "minishell.h"
 
 t_node *new_node(t_node_type type)
 {
@@ -10,12 +10,24 @@ t_node *new_node(t_node_type type)
     return node;
 }
 
+
 void execute_command(t_node *node, char **envp)
 {
-    pid_t pid;
+    int exit_status;
 
     if (!node || !node->args || !node->args[0])
         return;
+    
+    // Check if it's a builtin
+    if (is_builtin(node->args[0]))
+    {
+        execute_builtin(node, &exit_status);
+        // You might want to store exit_status somewhere
+        return;
+    }
+    
+    // Rest of your existing execute_command code...
+    pid_t pid;
 
     pid = fork();
     if (pid == 0)

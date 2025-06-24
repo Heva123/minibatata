@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "minishell.h"
 
 static void	handle_child_process(int pipefd[2], int fd_to_dup, t_node *node, char **envp)
 {

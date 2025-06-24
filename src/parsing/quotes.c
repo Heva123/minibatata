@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "minishell.h"
 
 void update_quote_state(char c, int *in_single, int *in_double)
 {

@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "minishell.h"
 
 static char	*read_heredoc_input(const char *delimiter)
 {

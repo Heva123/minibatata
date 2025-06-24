@@ -1,5 +1,5 @@
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 static int	is_unquoted_operator(char *input, int i, int in_single, int in_double)
 {

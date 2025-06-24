@@ -1,5 +1,5 @@
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 void execute_redirection_out(t_node *node, char **envp)
 {

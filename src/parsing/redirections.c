@@ -1,5 +1,5 @@
 
-#include "../../minishell.h"
+#include "minishell.h"
 
 static void update_redir_type(char **ptr, t_node_type *redir_type)
 {
