@@ -2,9 +2,9 @@ NAME = minishell
 
 SRC_DIR = src
 CC = gcc
-CFLAGS =  -Wall -Wextra -Werror -Iincludes
+CFLAGS = -Wall -Wextra -Werror -Iincludes -I/opt/homebrew/opt/readline/include
+LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
-LDFLAGS = -lreadline
 RM = rm -rf
 
 SRCS = \
@@ -27,6 +27,7 @@ SRCS = \
         builtins/env.c \
         builtins/exit.c \
         builtins/utils.c \
+		signals/signals.c \
         utils/ft_split.c \
         utils/ft_strjoin.c \
         utils/ft_strncmp.c \

@@ -17,7 +17,7 @@ int     ft_exit(t_node *node);
 
 // Builtin utils
 int     is_builtin(char *cmd);
-int     execute_builtin(t_node *node, int *exit_status);
+int     execute_builtin(t_node *node, volatile sig_atomic_t *exit_status);
 char    *get_env_var(char *var, char **env);
 int     set_env_var(char *var, char *value, char ***env);
 int     unset_env_var(char *var, char ***env);

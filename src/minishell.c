@@ -1,5 +1,5 @@
 #include "minishell.h"
-
+#include "signals.h"
 
 const char *node_type_to_str(t_node_type type)
 {
@@ -77,6 +77,9 @@ int main(int argc, char **argv, char **envp)
     (void)argc;
     (void)argv;
 
+    // Initialize signal handling
+    setup_shell_signals();
+
     // Copy environment variables
     i = 0;
     while (envp[i])
@@ -94,7 +97,10 @@ int main(int argc, char **argv, char **envp)
     {
         prompt = readline("🍄 minishell$ ");
         if (!prompt)
+        {
+            ft_putstr_fd("exit\n", STDOUT_FILENO);
             break;
+        }
         if (ft_strncmp(prompt, "exit", 5) == 0)
         {
             free(prompt);
@@ -102,7 +108,7 @@ int main(int argc, char **argv, char **envp)
         }
         add_history(prompt);
         tree = parse_prompt(prompt);
-        tree->env = env_copy; // Pass environment to the tree
+        tree->env = env_copy;
         print_tree(tree, 0);
         execute_tree(tree, envp);
         free(prompt);

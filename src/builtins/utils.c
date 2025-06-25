@@ -22,7 +22,8 @@ int is_builtin(char *cmd)
     return (0);
 }
 
-int execute_builtin(t_node *node, int *exit_status)
+int execute_builtin(t_node *node, volatile sig_atomic_t *exit_status)
+
 {
     if (!node || !node->args || !node->args[0])
         return (0);

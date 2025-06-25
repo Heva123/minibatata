@@ -1,5 +1,5 @@
-
- #include "minishell.h"
+#include "minishell.h"
+#include "signals.h"
 
 t_node *new_node(t_node_type type)
 {
@@ -10,47 +10,54 @@ t_node *new_node(t_node_type type)
     return node;
 }
 
-
 void execute_command(t_node *node, char **envp)
 {
-    int exit_status;
+    pid_t pid;
+    int status;
 
     if (!node || !node->args || !node->args[0])
         return;
     
-    // Check if it's a builtin
     if (is_builtin(node->args[0]))
     {
-        execute_builtin(node, &exit_status);
-        // You might want to store exit_status somewhere
+        // Handle builtins directly
+        execute_builtin(node, &g_signal_status);
         return;
     }
-    
-    // Rest of your existing execute_command code...
-    pid_t pid;
 
     pid = fork();
     if (pid == 0)
     {
+        // Child process - set execution signals
+        setup_exec_signals();
+        
         char *cmd_path = find_command_path(node->args[0], envp);
         if (!cmd_path)
         {
-            write(2, node->args[0], ft_strlen(node->args[0]));
-            write(2, ": command not found\n", 21);
+            ft_putstr_fd(node->args[0], STDERR_FILENO);
+            ft_putstr_fd(": command not found\n", STDERR_FILENO);
             exit(127);
         }
         execve(cmd_path, node->args, envp);
-        perror("execve"); 
+        perror("minishell");
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
-        write(2, "fork failed\n", 12);
+        perror("minishell: fork");
         return;
     }
-    waitpid(pid, NULL, 0);
+    
+    // Parent process - wait for child and get exit status
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+        g_signal_status = WEXITSTATUS(status);
+    else if (WIFSIGNALED(status))
+        g_signal_status = 128 + WTERMSIG(status);
+    
+    // Restore shell signals after command execution
+    restore_shell_signals();
 }
-
 
 
 void execute_tree(t_node *node, char **envp)
