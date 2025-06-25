@@ -48,6 +48,7 @@ SRCS = \
 		utils/ft_strcmp.c \
         utils/ft_itoa.c \
         utils/ft_substr.c \
+        utils/ft_sort_strarr.c \
 
 
 SRCS := $(addprefix $(SRC_DIR)/, $(SRCS))

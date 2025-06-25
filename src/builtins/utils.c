@@ -23,7 +23,6 @@ int is_builtin(char *cmd)
 }
 
 int execute_builtin(t_node *node, volatile sig_atomic_t *exit_status)
-
 {
     if (!node || !node->args || !node->args[0])
         return (0);
@@ -169,4 +168,21 @@ void print_env_vars(char **env)
         printf("%s\n", env[i]);
         i++;
     }
+}
+
+int is_valid_identifier(char *str)
+{
+    int i;
+
+    if (!str || !*str || ft_isdigit(*str))
+        return (0);
+    
+    i = 0;
+    while (str[i] && str[i] != '=')
+    {
+        if (!ft_isalnum(str[i]) && str[i] != '_')
+            return (0);
+        i++;
+    }
+    return (1);
 }
