@@ -18,9 +18,15 @@ void execute_command(t_node *node, char **envp)
     if (!node || !node->args || !node->args[0])
         return;
     
+    // Expand variables before execution
+    if (expand_variables(node) != 0)
+    {
+        g_signal_status = 1;
+        return;
+    }
+
     if (is_builtin(node->args[0]))
     {
-        // Handle builtins directly
         execute_builtin(node, &g_signal_status);
         return;
     }
@@ -28,9 +34,7 @@ void execute_command(t_node *node, char **envp)
     pid = fork();
     if (pid == 0)
     {
-        // Child process - set execution signals
         setup_exec_signals();
-        
         char *cmd_path = find_command_path(node->args[0], envp);
         if (!cmd_path)
         {
@@ -45,17 +49,16 @@ void execute_command(t_node *node, char **envp)
     else if (pid < 0)
     {
         perror("minishell: fork");
+        g_signal_status = 1;
         return;
     }
     
-    // Parent process - wait for child and get exit status
     waitpid(pid, &status, 0);
     if (WIFEXITED(status))
         g_signal_status = WEXITSTATUS(status);
     else if (WIFSIGNALED(status))
         g_signal_status = 128 + WTERMSIG(status);
     
-    // Restore shell signals after command execution
     restore_shell_signals();
 }
 

@@ -28,6 +28,8 @@ SRCS = \
         builtins/exit.c \
         builtins/utils.c \
 		signals/signals.c \
+        expansion/expansion.c \
+        expansion/helpers.c \
         utils/ft_split.c \
         utils/ft_strjoin.c \
         utils/ft_strncmp.c \
@@ -43,7 +45,9 @@ SRCS = \
 		utils/ft_isdigit.c \
 		utils/ft_atoi.c \
 		utils/ft_isalnum.c \
-		utils/ft_strcmp.c
+		utils/ft_strcmp.c \
+        utils/ft_itoa.c \
+        utils/ft_substr.c \
 
 
 SRCS := $(addprefix $(SRC_DIR)/, $(SRCS))

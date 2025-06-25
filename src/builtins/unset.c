@@ -1,22 +1,5 @@
 #include "minishell.h"
 
-int is_valid_identifier(char *str)
-{
-    int i;
-
-    if (!str || !*str || ft_isdigit(*str))
-        return (0);
-    
-    i = 0;
-    while (str[i])
-    {
-        if (!ft_isalnum(str[i]) && str[i] != '_')
-            return (0);
-        i++;
-    }
-    return (1);
-}
-
 int ft_unset(t_node *node)
 {
     int i;
