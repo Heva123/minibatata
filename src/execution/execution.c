@@ -10,6 +10,7 @@ t_node *new_node(t_node_type type)
     return node;
 }
 
+
 void execute_command(t_node *node, char **envp)
 {
     pid_t pid;
@@ -18,7 +19,6 @@ void execute_command(t_node *node, char **envp)
     if (!node || !node->args || !node->args[0])
         return;
     
-    // Expand variables before execution
     if (expand_variables(node) != 0)
     {
         g_signal_status = 1;
@@ -38,8 +38,15 @@ void execute_command(t_node *node, char **envp)
         char *cmd_path = find_command_path(node->args[0], envp);
         if (!cmd_path)
         {
-            ft_putstr_fd(node->args[0], STDERR_FILENO);
-            ft_putstr_fd(": command not found\n", STDERR_FILENO);
+            // Improved error handling goes here
+            if (ft_strchr(node->args[0], '/')) {
+                ft_putstr_fd("minishell: ", STDERR_FILENO);
+                ft_putstr_fd(node->args[0], STDERR_FILENO);
+                ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+            } else {
+                ft_putstr_fd(node->args[0], STDERR_FILENO);
+                ft_putstr_fd(": command not found\n", STDERR_FILENO);
+            }
             exit(127);
         }
         execve(cmd_path, node->args, envp);
