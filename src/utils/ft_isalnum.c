@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 18:45:15 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 18:46:01 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -11,25 +22,20 @@ int	ft_isalnum(int c)
 	return (0);
 }
 
-int ft_isnumber(const char *str)
+int	ft_isnumber(const char *str)
 {
-    int i;
+	int	i;
 
-    if (!str || !*str)
-        return (0);
-    
-    i = 0;
-    // Handle optional sign
-    if (str[i] == '+' || str[i] == '-')
-        i++;
-    
-    // Check remaining characters are digits
-    while (str[i])
-    {
-        if (!ft_isdigit(str[i]))
-            return (0);
-        i++;
-    }
-    
-    return (1);
+	if (!str || !*str)
+		return (0);
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

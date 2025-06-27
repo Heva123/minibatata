@@ -1,14 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpers.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 19:16:58 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 19:19:40 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void append_to_result(char **result, char *to_append)
+void	append_to_result(char **result, char *to_append)
 {
-    char *tmp;
+	char	*tmp;
 
-    tmp = ft_strjoin(*result, to_append);
-    if (!tmp)
-        return;  // or handle error
-    free(*result);
-    *result = tmp;
+	tmp = ft_strjoin(*result, to_append);
+	if (!tmp)
+		return ;
+	free(*result);
+	*result = tmp;
 }
 
 int	handle_exit_status_var(char **result, char *input, int *i)
@@ -70,7 +82,7 @@ int	append_char(char **result, char c)
 
 bool	in_double_quote(char *input, int pos)
 {
-	int	i;
+	int		i;
 	bool	in_dquote;
 
 	i = 0;
@@ -86,7 +98,7 @@ bool	in_double_quote(char *input, int pos)
 
 int	handle_single_quotes(char **result, char *input, int i)
 {
-	int	start;
+	int		start;
 	char	*quoted;
 
 	start = i++;
@@ -111,8 +123,8 @@ int	handle_double_quotes(char **result, char *input, int i, int last_exit_status
 	start = i++;
 	while (input[i] && input[i] != '"')
 	{
-		if (input[i] == '$' && input[i + 1] && 
-			(is_valid_var_char(input[i + 1]) || input[i + 1] == '?'))
+		if (input[i] == '$' && input[i + 1]
+			&& (is_valid_var_char(input[i + 1]) || input[i + 1] == '?'))
 			i += handle_special_vars(result, input, &i, env);
 		else
 			i += append_char(result, input[i]);

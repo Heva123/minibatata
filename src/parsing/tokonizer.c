@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokonizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 19:04:17 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 19:04:59 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_operator(const char *s)
@@ -39,7 +51,6 @@ void	tokenize_helper(int *i, int *start, int *t,
 	*start = *i;
 }
 
-
 void	add_token(int *t, char **tokens, const char *input, int start, int i)
 {
 	char	*token;
@@ -79,4 +90,3 @@ char	**tokenize_input(const char *input)
 	tokens[t] = NULL;
 	return (tokens);
 }
-

@@ -1,22 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 19:15:22 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 19:16:47 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-void free_ast(t_node *node)
+void	free_ast(t_node *node)
 {
-    if (!node)
-        return;
-    
-    if (node->args)
-        ft_free(node->args);
-    if (node->filename)
-        free(node->filename);
-    
-    free_ast(node->left);
-    free_ast(node->right);
-    free(node);
+	if (!node)
+		return ;
+	if (node->args)
+		ft_free(node->args);
+	if (node->filename)
+		free(node->filename);
+	free_ast(node->left);
+	free_ast(node->right);
+	free(node);
 }
 
-static int	is_unquoted_operator(char *input, int i, int in_single, int in_double)
+static int	is_unquoted_operator(char *input, int i,
+	int in_single, int in_double)
 {
 	int	j;
 

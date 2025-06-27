@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 18:57:58 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 18:59:05 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "signals.h"
 #include <readline/readline.h>
 #include <readline/history.h> 
 
-
-volatile sig_atomic_t g_signal_status = 0;
+volatile sig_atomic_t	g_signal_status = 0;
 
 void	handle_sigint(int sig)
 {
@@ -18,7 +29,6 @@ void	handle_sigint(int sig)
 	#else
 	write(STDOUT_FILENO, "🍄 minishell$ ", 16);
 	#endif
-
 }
 
 void	handle_sigquit(int sig)

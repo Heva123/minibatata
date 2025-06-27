@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quotes.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hinajib <hinajib@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/27 19:13:03 by hinajib           #+#    #+#             */
+/*   Updated: 2025/06/27 19:14:03 by hinajib          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void update_quote_state(char c, int *in_single, int *in_double)
+void	update_quote_state(char c, int *in_single, int *in_double)
 {
-    if (c == '\'' && !(*in_double))
-        *in_single = !(*in_single);
-    else if (c == '\"' && !(*in_single))
-        *in_double = !(*in_double);
+	if (c == '\'' && !(*in_double))
+		*in_single = !(*in_single);
+	else if (c == '\"' && !(*in_single))
+		*in_double = !(*in_double);
 }
 
 char	*process_quotes(const char *token)
