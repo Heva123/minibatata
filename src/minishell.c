@@ -66,55 +66,42 @@
 //     // Print left child
 //     print_tree(node->left, depth + 1);
 // }
-
 int main(int argc, char **argv, char **envp)
 {
-    char    *prompt;
-    t_node  *tree;
-    char    **env_copy;
-    int     i;
+    t_shell *shell = init_shell(envp);
+    char    *input;
+    t_node  *ast;
 
     (void)argc;
     (void)argv;
-
-    // Initialize signal handling
-    setup_shell_signals();
-
-    // Copy environment variables
-    i = 0;
-    while (envp[i])
-        i++;
-    env_copy = malloc(sizeof(char *) * (i + 1));
-    i = 0;
-    while (envp[i])
+    
+    if (!shell)
+        return (1);
+    
+    while (shell->is_running)
     {
-        env_copy[i] = ft_strdup(envp[i]);
-        i++;
-    }
-    env_copy[i] = NULL;
-
-    while (1)
-    {
-        prompt = readline("🍄 minishell$ ");
-        if (!prompt)
+        setup_shell_signals();
+        input = readline("🍄 minishell$ ");
+        if (!input)
         {
             ft_putstr_fd("exit\n", STDOUT_FILENO);
             break;
         }
-        if (ft_strncmp(prompt, "exit", 5) == 0)
+        
+        if (*input)
         {
-            free(prompt);
-            break;
+            add_history(input);
+            ast = parse_prompt(input);
+            if (ast)
+            {
+                ast->shell = shell;
+                execute_tree(ast, shell);
+                free_ast(ast);
+            }
         }
-        add_history(prompt);
-        tree = parse_prompt(prompt);
-        tree->env = env_copy;
-        //print_tree(tree, 0);
-        execute_tree(tree, envp);
-        free(prompt);
+        free(input);
     }
     
-    // Free environment copy
-    ft_free(env_copy);
-    return (0);
+    cleanup_shell(shell);
+    return (shell->exit_status);
 }

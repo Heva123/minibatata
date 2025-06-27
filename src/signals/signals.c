@@ -3,6 +3,7 @@
 #include <readline/readline.h>
 #include <readline/history.h> 
 
+
 volatile sig_atomic_t g_signal_status = 0;
 
 void	handle_sigint(int sig)
@@ -10,9 +11,14 @@ void	handle_sigint(int sig)
 	(void)sig;
 	g_signal_status = 130;
 	write(STDOUT_FILENO, "\n", 1);
+	#ifdef __linux__
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	#else
+	write(STDOUT_FILENO, "🍄 minishell$ ", 16);
+	#endif
+
 }
 
 void	handle_sigquit(int sig)

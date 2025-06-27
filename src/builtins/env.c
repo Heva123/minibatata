@@ -1,31 +1,21 @@
-// #include "minishell.h"
-
-
-// int ft_env(t_node *node)
-// {
-//     (void)node; 
-    
-//     print_env_vars(node->env);
-//     return (0);
-// }
-
 #include "minishell.h"
 
-int ft_env(t_node *node)
+int ft_env(t_node *node, t_shell *shell)
 {
     int i;
 
-    if (!node || !node->env)
-        return (1);
+    (void)node; // Not used
+    
+    if (!shell->env)
+        return (shell->exit_status = 1);
     
     i = 0;
-    while (node->env[i])
+    while (shell->env[i])
     {
-        // Only print variables with values (VAR=value)
-        if (ft_strchr(node->env[i], '='))
-            printf("%s\n", node->env[i]);
+        if (ft_strchr(shell->env[i], '='))
+            printf("%s\n", shell->env[i]);
         i++;
     }
     
-    return (0);
+    return (shell->exit_status = 0);
 }

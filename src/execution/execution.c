@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include "signals.h"
 
 t_node *new_node(t_node_type type)
 {
@@ -10,24 +9,23 @@ t_node *new_node(t_node_type type)
     return node;
 }
 
-
-void execute_command(t_node *node, char **envp)
+void execute_command(t_node *node, t_shell *shell)
 {
     pid_t pid;
     int status;
 
-    if (!node || !node->args || !node->args[0])
+    if (!node || !node->args || !node->args[0] || !shell)
         return;
     
     if (expand_variables(node) != 0)
     {
-        g_signal_status = 1;
+        shell->exit_status = 1;
         return;
     }
 
     if (is_builtin(node->args[0]))
     {
-        execute_builtin(node, &g_signal_status);
+        execute_builtin(node, shell);  // Changed to pass shell directly
         return;
     }
 
@@ -35,10 +33,9 @@ void execute_command(t_node *node, char **envp)
     if (pid == 0)
     {
         setup_exec_signals();
-        char *cmd_path = find_command_path(node->args[0], envp);
+        char *cmd_path = find_command_path(node->args[0], shell->env);
         if (!cmd_path)
         {
-            // Improved error handling goes here
             if (ft_strchr(node->args[0], '/')) {
                 ft_putstr_fd("minishell: ", STDERR_FILENO);
                 ft_putstr_fd(node->args[0], STDERR_FILENO);
@@ -49,41 +46,40 @@ void execute_command(t_node *node, char **envp)
             }
             exit(127);
         }
-        execve(cmd_path, node->args, envp);
+        execve(cmd_path, node->args, shell->env);
         perror("minishell");
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
         perror("minishell: fork");
-        g_signal_status = 1;
+        shell->exit_status = 1;
         return;
     }
     
     waitpid(pid, &status, 0);
     if (WIFEXITED(status))
-        g_signal_status = WEXITSTATUS(status);
+        shell->exit_status = WEXITSTATUS(status);
     else if (WIFSIGNALED(status))
-        g_signal_status = 128 + WTERMSIG(status);
+        shell->exit_status = 128 + WTERMSIG(status);
     
     restore_shell_signals();
 }
 
-
-void execute_tree(t_node *node, char **envp)
+void execute_tree(t_node *node, t_shell *shell)
 {
-    if (!node)
+    if (!node || !shell)
         return;
     if (node->type == NODE_CMD)
-        execute_command(node, envp);
+        execute_command(node, shell);
     else if (node->type == NODE_REDIR_OUT)
-        execute_redirection_out(node, envp);
+        execute_redirection_out(node, shell);
     else if (node->type == NODE_REDIR_IN)
-        execute_redirection_in(node, envp);
+        execute_redirection_in(node, shell);
     else if (node->type == NODE_APPEND)
-        execute_redirection_append(node, envp);
+        execute_redirection_append(node, shell);
     else if (node->type == NODE_PIPE)
-        execute_pipe_node(node, envp);
+        execute_pipe_node(node, shell);
     else if (node->type == NODE_HEREDOC) 
-        execute_heredoc(node, envp);
+        execute_heredoc(node, shell);
 }

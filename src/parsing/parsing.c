@@ -1,6 +1,21 @@
 
 #include "minishell.h"
 
+void free_ast(t_node *node)
+{
+    if (!node)
+        return;
+    
+    if (node->args)
+        ft_free(node->args);
+    if (node->filename)
+        free(node->filename);
+    
+    free_ast(node->left);
+    free_ast(node->right);
+    free(node);
+}
+
 static int	is_unquoted_operator(char *input, int i, int in_single, int in_double)
 {
 	int	j;

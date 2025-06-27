@@ -1,25 +1,22 @@
 #include "minishell.h"
 
-
-int ft_echo(t_node *node)
+int ft_echo(t_node *node, t_shell *shell)
 {
     int i;
     int newline;
 
+    (void)shell; // Not used but kept for consistency
     if (!node || !node->args)
         return (1);
     
     newline = 1;
     i = 1;
-    
-    // Check for -n option
-    if (node->args[i] && ft_strcmp(node->args[i], "-n") == 0)
+    if (node->args[1] && ft_strcmp(node->args[1], "-n") == 0)
     {
         newline = 0;
         i++;
     }
     
-    // Print arguments
     while (node->args[i])
     {
         printf("%s", node->args[i]);

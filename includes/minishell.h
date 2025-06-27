@@ -26,14 +26,29 @@ typedef enum e_node_type {
     NODE_HEREDOC,
 } t_node_type;
 
+typedef struct s_shell {
+    char    **env;
+    int     exit_status;
+    bool    is_running;
+    char    *pwd;
+    char    *oldpwd;
+} t_shell;
+
 typedef struct s_node {
     t_node_type type;
     char **args;
     char *filename;
     struct s_node *left;
     struct s_node *right;
-    char **env; 
+    t_shell *shell;
 } t_node;
+
+
+/* Add to existing prototypes */
+t_shell  *init_shell(char **envp);
+void     cleanup_shell(t_shell *shell);
+char     **copy_env(char **envp);
+void     update_pwd_vars(t_shell *shell);
 
 // ---------------- Tokenizer ----------------
 char    **tokenize_input(const char *input);
@@ -57,12 +72,15 @@ char    *ft_strndup(const char *s, size_t n);
 void    ft_putstr_fd(char *s, int fd);
 int     ft_isdigit(int c);
 int     ft_isalnum(int c);
+int     ft_isnumber(const char *str);
 int     ft_atoi(const char *str);
 int     ft_strcmp(const char *s1, const char *s2);
 char	*ft_itoa(int n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 void    ft_sort_strarr(char **arr);
+void    free_ast(t_node *node);
 
+void    ft_free_strarr(char **arr);
 /* --------- Expansion Helpers --------- */
 bool    in_double_quote(char *input, int pos);
 int     handle_single_quotes(char **result, char *input, int i);
@@ -79,12 +97,13 @@ bool	is_valid_var_char(char c);
 int	handle_special_vars(char **result, char *input, int *i, char **env);
 
 // ---------------- Execution ----------------
-void    execute_tree(t_node *node, char **envp);
-void    execute_pipe_node(t_node *node, char **envp);
-void    execute_redirection_out(t_node *node, char **envp);
-void    execute_redirection_in(t_node *node, char **envp);
-void    execute_redirection_append(t_node *node, char **envp);
-void    execute_heredoc(t_node *node, char **envp);
+void    execute_tree(t_node *node, t_shell *shell);
+void    execute_command(t_node *node, t_shell *shell);
+void    execute_pipe_node(t_node *node, t_shell *shell);
+void    execute_redirection_out(t_node *node, t_shell *shell);
+void    execute_redirection_in(t_node *node, t_shell *shell);
+void    execute_redirection_append(t_node *node, t_shell *shell);
+void    execute_heredoc(t_node *node, t_shell *shell);
 
 // ---------------- Parsing ----------------
 t_node  *parse_prompt(char *input);

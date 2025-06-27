@@ -7,7 +7,7 @@ int handle_pid_var(char **result, char *input, int *i)
     char    *pid_str;
     char    *tmp;
 
-    (void)input;  // If unused
+    (void)input; 
     pid_str = ft_itoa(getpid());
     if (!pid_str)
         return (0);
@@ -61,23 +61,23 @@ char	*expand_str(char *input, int last_exit_status, char **env)
 	return (result);
 }
 
-int	expand_variables(t_node *node)
+int expand_variables(t_node *node)
 {
-	int		i;
-	char	*expanded;
+    int     i;
+    char    *expanded;
 
-	if (!node || !node->args)
-		return (0);
-	
-	i = 0;
-	while (node->args[i])
-	{
-		expanded = expand_str(node->args[i], g_signal_status, node->env);
-		if (!expanded)
-			return (1);
-		free(node->args[i]);
-		node->args[i] = expanded;
-		i++;
-	}
-	return (0);
+    if (!node || !node->args || !node->shell)
+        return (0);
+    
+    i = 0;
+    while (node->args[i])
+    {
+        expanded = expand_str(node->args[i], node->shell->exit_status, node->shell->env);
+        if (!expanded)
+            return (1);
+        free(node->args[i]);
+        node->args[i] = expanded;
+        i++;
+    }
+    return (0);
 }

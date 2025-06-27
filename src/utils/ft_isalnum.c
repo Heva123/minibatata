@@ -10,3 +10,26 @@ int	ft_isalnum(int c)
 	}
 	return (0);
 }
+
+int ft_isnumber(const char *str)
+{
+    int i;
+
+    if (!str || !*str)
+        return (0);
+    
+    i = 0;
+    // Handle optional sign
+    if (str[i] == '+' || str[i] == '-')
+        i++;
+    
+    // Check remaining characters are digits
+    while (str[i])
+    {
+        if (!ft_isdigit(str[i]))
+            return (0);
+        i++;
+    }
+    
+    return (1);
+}

@@ -22,29 +22,27 @@ int is_builtin(char *cmd)
     return (0);
 }
 
-int execute_builtin(t_node *node, volatile sig_atomic_t *exit_status)
+int execute_builtin(t_node *node, t_shell *shell)
 {
-    if (!node || !node->args || !node->args[0])
+    if (!node || !node->args || !node->args[0] || !shell)
         return (0);
     
     if (ft_strcmp(node->args[0], "echo") == 0)
-        *exit_status = ft_echo(node);
+        return (ft_echo(node, shell));
     else if (ft_strcmp(node->args[0], "cd") == 0)
-        *exit_status = ft_cd(node);
+        return (ft_cd(node, shell));
     else if (ft_strcmp(node->args[0], "pwd") == 0)
-        *exit_status = ft_pwd(node);
+        return (ft_pwd(node, shell));
     else if (ft_strcmp(node->args[0], "export") == 0)
-        *exit_status = ft_export(node);
+        return (ft_export(node, shell));
     else if (ft_strcmp(node->args[0], "unset") == 0)
-        *exit_status = ft_unset(node);
+        return (ft_unset(node, shell));
     else if (ft_strcmp(node->args[0], "env") == 0)
-        *exit_status = ft_env(node);
+        return (ft_env(node, shell));
     else if (ft_strcmp(node->args[0], "exit") == 0)
-        *exit_status = ft_exit(node);
-    else
-        return (0);
+        return (ft_exit(node, shell));
     
-    return (1);
+    return (0);
 }
 
 char *get_env_var(char *var, char **env)
@@ -66,96 +64,99 @@ char *get_env_var(char *var, char **env)
     return (NULL);
 }
 
-int set_env_var(char *var, char *value, char ***env)
+int set_env_var(char *var, char *value, t_shell *shell)
 {
-    int i;
-    int len;
-    char *new_var;
+    char *env_str;
     char **new_env;
+    int count = 0;
+    int i = 0;
 
-    if (!var || !env || !*env)
-        return (1);
+    if (!var || !shell || !shell->env)
+        return 1;
     
-    len = ft_strlen(var);
-    i = 0;
-    while ((*env)[i])
+    // Create the new environment string
+    env_str = ft_strjoin(var, "=");
+    if (!env_str)
+        return 1;
+    char *tmp = env_str;
+    env_str = ft_strjoin(env_str, value ? value : "");
+    free(tmp);
+    if (!env_str)
+        return 1;
+    
+    // Check if variable exists
+    while (shell->env[count] && ft_strncmp(shell->env[count], var, ft_strlen(var)) != 0)
+        count++;
+    
+    if (shell->env[count])
     {
-        if (ft_strncmp((*env)[i], var, len) == 0 && (*env)[i][len] == '=')
-        {
-            free((*env)[i]);
-            new_var = ft_strjoin(var, "=");
-            (*env)[i] = ft_strjoin(new_var, value);
-            free(new_var);
-            return (0);
-        }
-        i++;
+        // Replace existing variable
+        free(shell->env[count]);
+        shell->env[count] = env_str;
+        return 0;
     }
     
-    // Variable not found, add it
-    new_env = malloc(sizeof(char *) * (i + 2));
+    // Add new variable
+    while (shell->env[i]) i++;
+    new_env = calloc(i + 2, sizeof(char *));
     if (!new_env)
-        return (1);
-    
-    i = 0;
-    while ((*env)[i])
     {
-        new_env[i] = ft_strdup((*env)[i]);
-        i++;
+        free(env_str);
+        return 1;
     }
     
-    new_var = ft_strjoin(var, "=");
-    new_env[i] = ft_strjoin(new_var, value);
-    free(new_var);
-    new_env[i + 1] = NULL;
+    for (int j = 0; j < i; j++)
+        new_env[j] = shell->env[j];
     
-    ft_free(*env);
-    *env = new_env;
-    return (0);
+    new_env[i] = env_str;
+    free(shell->env);
+    shell->env = new_env;
+    return 0;
 }
 
-int unset_env_var(char *var, char ***env)
+int unset_env_var(char *var, t_shell *shell)
 {
     int i;
     int j;
     int len;
     char **new_env;
 
-    if (!var || !env || !*env)
-        return (1);
+    if (!var || !shell || !shell->env)
+        return 1;
     
     len = ft_strlen(var);
     i = 0;
-    while ((*env)[i])
+    while (shell->env[i])
     {
-        if (ft_strncmp((*env)[i], var, len) == 0 && 
-            ((*env)[i][len] == '=' || (*env)[i][len] == '\0'))
+        if (ft_strncmp(shell->env[i], var, len) == 0 && 
+            (shell->env[i][len] == '=' || shell->env[i][len] == '\0'))
         {
-            // Found the variable, create new env without it
-            new_env = malloc(sizeof(char *) * i);
+            // Found the variable
+            new_env = calloc(i, sizeof(char *));
             if (!new_env)
-                return (1);
+                return 1;
             
             j = 0;
             while (j < i)
             {
-                new_env[j] = ft_strdup((*env)[j]);
+                new_env[j] = ft_strdup(shell->env[j]);
                 j++;
             }
             
-            while ((*env)[j + 1])
+            while (shell->env[j + 1])
             {
-                new_env[j] = ft_strdup((*env)[j + 1]);
+                new_env[j] = ft_strdup(shell->env[j + 1]);
                 j++;
             }
             new_env[j] = NULL;
             
-            ft_free(*env);
-            *env = new_env;
-            return (0);
+            ft_free_strarr(shell->env);
+            shell->env = new_env;
+            return 0;
         }
         i++;
     }
-    return (0);
+    return 0;
 }
 
 void print_env_vars(char **env)

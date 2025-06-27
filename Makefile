@@ -5,6 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -Iincludes -I/opt/homebrew/opt/readline/include
 LDFLAGS = -L/opt/homebrew/opt/readline/lib -lreadline
 
+
 RM = rm -rf
 
 SRCS = \
@@ -30,6 +31,8 @@ SRCS = \
 		signals/signals.c \
         expansion/expansion.c \
         expansion/helpers.c \
+        shell/shell.c \
+        shell/env_utils.c \
         utils/ft_split.c \
         utils/ft_strjoin.c \
         utils/ft_strncmp.c \
